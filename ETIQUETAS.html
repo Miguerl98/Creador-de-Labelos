@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Labelos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background: #c8e6c9;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: #e0f2f1;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label, input {
+            display: block;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            flex: 1;
+            margin: 0 5px;
+        }
+        .etiquetas {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .etiqueta {
+            border: 1px solid black;
+            padding: 10px;
+            width: 10.5cm;
+            height: 3.8cm;
+            font-size: 14px;
+            font-style: italic;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            line-height: 2.5;
+            background: white;
+        }
+        .titulo {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 5px;
+            font-style: normal;
+            font-size: 16px;
+        }
+        .fila {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #etiquetas, #etiquetas * {
+                visibility: visible;
+            }
+            #etiquetas {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Generador de Labelos</h2>
+        <form id="formulario">
+            <label>Nombre de la especie: <input type="text" id="especie" required></label>
+            <label>Autor de la especie: <input type="text" id="autor" required></label>
+            <label>Persona que actualizó: <input type="text" id="actualizador" required></label>
+            <label>Fecha de actualización: <input type="month" id="fecha" required></label>
+            <div class="button-container">
+                <button type="button" id="limpiar">Limpiar</button>
+                <button type="submit">Generar Labelos</button>
+                <button type="button" id="imprimir" style="display: none;">Imprimir</button>
+            </div>
+        </form>
+        <div id="etiquetas" class="etiquetas" style="display: none;"></div>
+    </div>
+
+    <script>
+        function formatearFecha(fecha) {
+            const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            let [año, mes] = fecha.split("-");
+            return `${meses[parseInt(mes) - 1]} ${año}`;
+        }
+
+        document.getElementById('formulario').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let especie = document.getElementById('especie').value;
+            let autor = document.getElementById('autor').value;
+            let actualizador = document.getElementById('actualizador').value;
+            let fecha = formatearFecha(document.getElementById('fecha').value);
+            
+            let etiquetasDiv = document.getElementById('etiquetas');
+            etiquetasDiv.innerHTML = '';
+            
+            for (let i = 0; i < 12; i++) {
+                let etiquetaHTML = `<div class='etiqueta'>
+                                        <div class='titulo'>Herbario Nacional Colombiano (COL)</div>
+                                        <div class='fila'><strong style='margin-right: 20px; font-style: italic;'>${especie}</strong> <span style='margin-left: 20px;'>${autor}</span></div>
+                                        <div class='fila'>Actualizó: <span style='margin-right: 20px;'>${actualizador}</span> <span style='margin-left: 20px;'>${fecha}</span></div>
+                                    </div>`;
+                etiquetasDiv.innerHTML += etiquetaHTML;
+            }
+            
+            etiquetasDiv.style.display = 'grid';
+            document.getElementById('imprimir').style.display = 'block';
+        });
+
+        document.getElementById('imprimir').addEventListener('click', function() {
+            window.print();
+        });
+
+        document.getElementById('limpiar').addEventListener('click', function() {
+            document.getElementById('formulario').reset();
+            document.getElementById('etiquetas').style.display = 'none';
+            document.getElementById('imprimir').style.display = 'none';
+        });
+    </script>
+<div style='position: fixed; bottom: 10px; right: 10px; font-size: 12px; font-style: normal;'>Creado por: Miguel Angel R. R.</div>
+</body>
+</html>
